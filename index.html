@@ -32,6 +32,26 @@
     padding:32px 16px 60px;
   }
   .wrap{width:100%;max-width:760px;}
+
+  .lang-toggle{
+    display:flex;
+    justify-content:center;
+    margin-bottom:16px;
+  }
+  .lang-toggle button{
+    font-family:'Inter',sans-serif;
+    font-size:12.5px;
+    font-weight:500;
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--muted);
+    padding:7px 14px;
+    border-radius:20px;
+    cursor:pointer;
+  }
+  .lang-toggle button:hover{border-color:var(--amber);color:var(--chalk);}
+  .lang-toggle button .swap-icon{margin-right:6px;}
+
   header{margin-bottom:28px;text-align:center;}
   .eyebrow{
     font-family:'Oswald',sans-serif;
@@ -202,21 +222,76 @@
     color:var(--muted);
     line-height:1.6;
   }
+
+  .install-box{
+    margin-top:20px;
+    background:var(--asphalt-2);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:14px 18px;
+  }
+  .install-box summary{
+    cursor:pointer;
+    font-family:'Oswald',sans-serif;
+    font-size:14px;
+    letter-spacing:0.02em;
+    color:var(--amber);
+    list-style:none;
+  }
+  .install-box summary::-webkit-details-marker{display:none;}
+  .install-box summary::before{
+    content:'+ ';
+  }
+  .install-box[open] summary::before{
+    content:'\2212 ';
+  }
+  .install-content{
+    margin-top:14px;
+    display:flex;
+    gap:24px;
+    flex-wrap:wrap;
+  }
+  .install-platform{flex:1;min-width:200px;}
+  .install-heading{
+    font-size:13px;
+    font-weight:500;
+    color:var(--chalk);
+    margin:0 0 8px;
+  }
+  .install-platform ol{
+    margin:0;
+    padding-left:18px;
+    font-size:12.5px;
+    color:var(--muted);
+    line-height:1.7;
+  }
+  .install-note{
+    width:100%;
+    font-size:11.5px;
+    color:var(--muted);
+    margin:14px 0 0;
+    border-top:1px solid var(--line);
+    padding-top:12px;
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
 
+  <div class="lang-toggle">
+    <button id="langBtn" type="button"><span class="swap-icon">&#8646;</span><span id="langBtnLabel">Espa&ntilde;ol</span></button>
+  </div>
+
   <header>
-    <p class="eyebrow">San Diego &mdash; Tijuana</p>
-    <h1>Border gas price calculator</h1>
-    <p>Enter a price on either side and it converts instantly to the other currency and unit.</p>
+    <p class="eyebrow" id="eyebrow">San Diego &mdash; Tijuana</p>
+    <h1 id="title">Border gas price calculator</h1>
+    <p id="subtitle">Enter a price on either side and it converts instantly to the other currency and unit.</p>
   </header>
 
   <div class="rate-bar">
-    <label for="rate">Exchange rate</label>
+    <label for="rate" id="rateLabel">Exchange rate</label>
     <div class="rate-input-group">
-      <span>1 USD =</span>
+      <span id="rateEq">1 USD =</span>
       <input type="number" id="rate" value="18.50" step="0.01" min="0.01" inputmode="decimal">
       <span>MXN</span>
     </div>
@@ -225,9 +300,9 @@
 
   <div class="grid">
     <div class="panel us" id="panelUS">
-      <p class="flag">United States</p>
-      <p class="side-name">San Diego side</p>
-      <span class="field-label">Price per gallon</span>
+      <p class="flag" id="flagUS">United States</p>
+      <p class="side-name" id="sideNameUS">San Diego side</p>
+      <span class="field-label" id="labelUS">Price per gallon</span>
       <div class="price-input-row" id="rowUSD">
         <span class="sym">$</span>
         <input type="number" id="usd" placeholder="4.79" step="0.01" min="0" inputmode="decimal">
@@ -241,9 +316,9 @@
     </div>
 
     <div class="panel mx" id="panelMX">
-      <p class="flag">M&eacute;xico</p>
-      <p class="side-name">Tijuana side</p>
-      <span class="field-label">Price per liter</span>
+      <p class="flag" id="flagMX">M&eacute;xico</p>
+      <p class="side-name" id="sideNameMX">Tijuana side</p>
+      <span class="field-label" id="labelMX">Price per liter</span>
       <div class="price-input-row" id="rowMXN">
         <span class="sym">$</span>
         <input type="number" id="mxn" placeholder="22.80" step="0.01" min="0" inputmode="decimal">
@@ -253,9 +328,34 @@
     </div>
   </div>
 
-  <footer>
+  <footer id="footerText">
     1 US gallon = 3.78541 liters. This tool doesn't fetch live prices or exchange rates &mdash; enter today's numbers yourself for an accurate read.
   </footer>
+
+  <details class="install-box">
+    <summary id="installSummary">Add this to your home screen</summary>
+    <div class="install-content">
+      <div class="install-platform">
+        <p class="install-heading" id="installIOSHeading">iPhone / iPad (Safari)</p>
+        <ol id="installIOSSteps">
+          <li>Open this page in Safari.</li>
+          <li>Tap the Share icon (square with an arrow pointing up).</li>
+          <li>Scroll down and tap "Add to Home Screen."</li>
+          <li>Tap "Add" in the top right.</li>
+        </ol>
+      </div>
+      <div class="install-platform">
+        <p class="install-heading" id="installAndroidHeading">Android (Chrome)</p>
+        <ol id="installAndroidSteps">
+          <li>Open this page in Chrome.</li>
+          <li>Tap the three-dot menu in the top right.</li>
+          <li>Tap "Add to Home screen," then "Install."</li>
+          <li>Confirm by tapping "Add" or "Install."</li>
+        </ol>
+      </div>
+      <p class="install-note" id="installNote">Once added, it opens full-screen like a regular app, with no browser bar.</p>
+    </div>
+  </details>
 
 </div>
 
@@ -273,6 +373,105 @@
   const equivMXN = document.getElementById('equivMXN');
 
   let lastEdited = null;
+  let lang = 'en';
+
+  const translations = {
+    en: {
+      eyebrow: 'San Diego — Tijuana',
+      title: 'Border gas price calculator',
+      subtitle: 'Enter a price on either side and it converts instantly to the other currency and unit.',
+      rateLabel: 'Exchange rate',
+      rateEq: '1 USD =',
+      rateHint: "Update this to today's rate for an accurate conversion.",
+      flagUS: 'United States',
+      sideNameUS: 'San Diego side',
+      labelUS: 'Price per gallon',
+      flagMX: 'México',
+      sideNameMX: 'Tijuana side',
+      labelMX: 'Price per liter',
+      footerText: "1 US gallon = 3.78541 liters. This tool doesn't fetch live prices or exchange rates — enter today's numbers yourself for an accurate read.",
+      installSummary: 'Add this to your home screen',
+      installIOSHeading: 'iPhone / iPad (Safari)',
+      installIOSSteps: ['Open this page in Safari.', 'Tap the Share icon (square with an arrow pointing up).', 'Scroll down and tap "Add to Home Screen."', 'Tap "Add" in the top right.'],
+      installAndroidHeading: 'Android (Chrome)',
+      installAndroidSteps: ['Open this page in Chrome.', 'Tap the three-dot menu in the top right.', 'Tap "Add to Home screen," then "Install."', 'Confirm by tapping "Add" or "Install."'],
+      installNote: 'Once added, it opens full-screen like a regular app, with no browser bar.',
+      usdPlaceholder: '4.79',
+      mxnPlaceholder: '22.80',
+      equivUSDEmpty: 'Enter a price to see the peso-per-liter equivalent.',
+      equivMXNEmpty: 'Enter a price to see the dollar-per-gallon equivalent.',
+      equivUSDFilled: (usdL, mxnL) => 'That equals ' + usdL + ' USD/L, or ' + mxnL + ' MXN/L.',
+      equivMXNFilled: (mxn, usdGal) => 'That equals ' + mxn + ' MXN/L, or ' + usdGal + ' USD/gal.',
+      rateInvalid: 'Enter a valid exchange rate above.',
+      langBtnLabel: 'Español'
+    },
+    es: {
+      eyebrow: 'San Diego — Tijuana',
+      title: 'Calculadora de gasolina fronteriza',
+      subtitle: 'Ingresa un precio en cualquiera de los dos lados y se convierte al instante a la otra moneda y unidad.',
+      rateLabel: 'Tipo de cambio',
+      rateEq: '1 USD =',
+      rateHint: 'Actualiza esto al tipo de cambio de hoy para una conversión precisa.',
+      flagUS: 'Estados Unidos',
+      sideNameUS: 'Lado San Diego',
+      labelUS: 'Precio por gal\u00f3n',
+      flagMX: 'M\u00e9xico',
+      sideNameMX: 'Lado Tijuana',
+      labelMX: 'Precio por litro',
+      footerText: 'Un gal\u00f3n estadounidense = 3.78541 litros. Esta herramienta no obtiene precios ni tipos de cambio en tiempo real \u2014 ingresa t\u00fa mismo los datos de hoy para una lectura precisa.',
+      installSummary: 'Agregar a tu pantalla de inicio',
+      installIOSHeading: 'iPhone / iPad (Safari)',
+      installIOSSteps: ['Abre esta p\u00e1gina en Safari.', 'Toca el ícono de compartir (cuadro con una flecha hacia arriba).', 'Despl\u00e1zate hacia abajo y toca "Agregar a inicio."', 'Toca "Agregar" en la esquina superior derecha.'],
+      installAndroidHeading: 'Android (Chrome)',
+      installAndroidSteps: ['Abre esta p\u00e1gina en Chrome.', 'Toca el men\u00fa de tres puntos en la esquina superior derecha.', 'Toca "Agregar a pantalla de inicio" y luego "Instalar."', 'Confirma tocando "Agregar" o "Instalar."'],
+      installNote: 'Una vez agregada, se abre a pantalla completa como una app normal, sin barra del navegador.',
+      usdPlaceholder: '4.79',
+      mxnPlaceholder: '22.80',
+      equivUSDEmpty: 'Ingresa un precio para ver el equivalente en pesos por litro.',
+      equivMXNEmpty: 'Ingresa un precio para ver el equivalente en d\u00f3lares por gal\u00f3n.',
+      equivUSDFilled: (usdL, mxnL) => 'Eso equivale a ' + usdL + ' USD/L, o ' + mxnL + ' MXN/L.',
+      equivMXNFilled: (mxn, usdGal) => 'Eso equivale a ' + mxn + ' MXN/L, o ' + usdGal + ' USD/gal.',
+      rateInvalid: 'Ingresa un tipo de cambio v\u00e1lido arriba.',
+      langBtnLabel: 'English'
+    }
+  };
+
+  function applyStaticText(){
+    const t = translations[lang];
+    document.getElementById('eyebrow').textContent = t.eyebrow;
+    document.getElementById('title').textContent = t.title;
+    document.getElementById('subtitle').textContent = t.subtitle;
+    document.getElementById('rateLabel').textContent = t.rateLabel;
+    document.getElementById('rateEq').textContent = t.rateEq;
+    document.getElementById('rateHint').textContent = t.rateHint;
+    document.getElementById('flagUS').textContent = t.flagUS;
+    document.getElementById('sideNameUS').textContent = t.sideNameUS;
+    document.getElementById('labelUS').textContent = t.labelUS;
+    document.getElementById('flagMX').textContent = t.flagMX;
+    document.getElementById('sideNameMX').textContent = t.sideNameMX;
+    document.getElementById('labelMX').textContent = t.labelMX;
+    document.getElementById('footerText').textContent = t.footerText;
+    document.getElementById('installSummary').textContent = t.installSummary;
+    document.getElementById('installIOSHeading').textContent = t.installIOSHeading;
+    document.getElementById('installAndroidHeading').textContent = t.installAndroidHeading;
+    document.getElementById('installNote').textContent = t.installNote;
+    document.getElementById('langBtnLabel').textContent = t.langBtnLabel;
+
+    const iosSteps = document.querySelectorAll('#installIOSSteps li');
+    t.installIOSSteps.forEach((text, i) => { if(iosSteps[i]) iosSteps[i].textContent = text; });
+    const androidSteps = document.querySelectorAll('#installAndroidSteps li');
+    t.installAndroidSteps.forEach((text, i) => { if(androidSteps[i]) androidSteps[i].textContent = text; });
+
+    usdInput.placeholder = t.usdPlaceholder;
+    mxnInput.placeholder = t.mxnPlaceholder;
+    document.documentElement.lang = lang;
+  }
+
+  document.getElementById('langBtn').addEventListener('click', () => {
+    lang = (lang === 'en') ? 'es' : 'en';
+    applyStaticText();
+    recompute();
+  });
 
   function getRate(){
     const r = parseFloat(rateInput.value);
@@ -291,6 +490,7 @@
   }
 
   function recompute(){
+    const t = translations[lang];
     const rate = getRate();
     let usd = parseFloat(usdInput.value);
     let mxn = parseFloat(mxnInput.value);
@@ -301,8 +501,8 @@
     rowMXN.classList.toggle('active', document.activeElement === mxnInput);
 
     if(!rate){
-      equivUSD.textContent = 'Enter a valid exchange rate above.';
-      equivMXN.textContent = 'Enter a valid exchange rate above.';
+      equivUSD.textContent = t.rateInvalid;
+      equivMXN.textContent = t.rateInvalid;
       return;
     }
 
@@ -324,15 +524,15 @@
     mxn = parseFloat(mxnInput.value);
 
     if(!isNaN(usd) && usd > 0){
-      equivUSD.textContent = 'That equals ' + fmt(usd / GAL_TO_L, 2) + ' USD/L, or ' + fmt(usdGalToMxnL(usd, rate), 2) + ' MXN/L.';
+      equivUSD.textContent = t.equivUSDFilled(fmt(usd / GAL_TO_L, 2), fmt(usdGalToMxnL(usd, rate), 2));
     } else {
-      equivUSD.textContent = 'Enter a price to see the peso-per-liter equivalent.';
+      equivUSD.textContent = t.equivUSDEmpty;
     }
 
     if(!isNaN(mxn) && mxn > 0){
-      equivMXN.textContent = 'That equals ' + fmt(mxn, 2) + ' MXN/L, or ' + fmt(mxnLToUsdGal(mxn, rate), 2) + ' USD/gal.';
+      equivMXN.textContent = t.equivMXNFilled(fmt(mxn, 2), fmt(mxnLToUsdGal(mxn, rate), 2));
     } else {
-      equivMXN.textContent = 'Enter a price to see the dollar-per-gallon equivalent.';
+      equivMXN.textContent = t.equivMXNEmpty;
     }
   }
 
@@ -344,6 +544,7 @@
   usdInput.addEventListener('blur', recompute);
   mxnInput.addEventListener('blur', recompute);
 
+  applyStaticText();
   recompute();
 </script>
 </body>
