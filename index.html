@@ -94,7 +94,7 @@
   }
   .rate-input-group{
     display:flex;
-    align-items:baseline;
+    align-items:center;
     gap:6px;
   }
   .rate-input-group span{color:var(--muted);font-size:13px;}
@@ -111,6 +111,33 @@
     text-align:center;
   }
   #rate:focus{outline:none;border-bottom-color:#FFD166;}
+
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button{
+    -webkit-appearance:none;
+    margin:0;
+  }
+  input[type=number]{-moz-appearance:textfield;}
+
+  .step-btn{
+    font-family:'Oswald',sans-serif;
+    font-size:16px;
+    line-height:1;
+    background:var(--asphalt-2);
+    border:1px solid var(--line);
+    color:var(--chalk);
+    width:26px;
+    height:26px;
+    border-radius:6px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    padding:0;
+  }
+  .step-btn:hover{border-color:var(--amber);color:var(--amber);}
+  .step-btn:active{background:var(--amber);color:var(--asphalt);}
   .rate-hint{
     font-size:11.5px;
     color:var(--muted);
@@ -121,14 +148,13 @@
 
   .grid{
     display:grid;
-    grid-template-columns:1fr auto 1fr;
-    gap:0;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
     align-items:stretch;
     margin-bottom:22px;
   }
   @media (max-width:560px){
-    .grid{grid-template-columns:1fr;gap:16px;}
-    .divider{display:none;}
+    .grid{grid-template-columns:1fr;}
   }
 
   .panel{
@@ -164,7 +190,7 @@
   }
   .price-input-row{
     display:flex;
-    align-items:baseline;
+    align-items:center;
     gap:6px;
     border-bottom:2px solid var(--line);
     padding-bottom:6px;
@@ -200,20 +226,6 @@
     line-height:1.6;
   }
   .equiv strong{color:var(--chalk);font-weight:500;}
-
-  .divider{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    padding:0 18px;
-  }
-  .divider .dash-line{
-    width:0;
-    flex:1;
-    border-left:3px dashed var(--line);
-    min-height:80px;
-  }
 
   footer{
     margin-top:28px;
@@ -292,7 +304,9 @@
     <label for="rate" id="rateLabel">Exchange rate</label>
     <div class="rate-input-group">
       <span id="rateEq">1 USD =</span>
-      <input type="number" id="rate" value="18.50" step="0.01" min="0.01" inputmode="decimal">
+      <button type="button" class="step-btn" data-target="rate" data-dir="down">&minus;</button>
+      <input type="number" id="rate" value="17.50" step="0.01" min="0.01" inputmode="decimal">
+      <button type="button" class="step-btn" data-target="rate" data-dir="up">+</button>
       <span>MXN</span>
     </div>
   </div>
@@ -305,14 +319,12 @@
       <span class="field-label" id="labelUS">Price per gallon</span>
       <div class="price-input-row" id="rowUSD">
         <span class="sym">$</span>
-        <input type="number" id="usd" placeholder="4.79" step="0.01" min="0" inputmode="decimal">
+        <button type="button" class="step-btn" data-target="usd" data-dir="down">&minus;</button>
+        <input type="number" id="usd" value="5.10" placeholder="4.79" step="0.01" min="0" inputmode="decimal">
+        <button type="button" class="step-btn" data-target="usd" data-dir="up">+</button>
         <span class="unit">USD/gal</span>
       </div>
       <p class="equiv" id="equivUSD">&mdash;</p>
-    </div>
-
-    <div class="divider">
-      <div class="dash-line"></div>
     </div>
 
     <div class="panel mx" id="panelMX">
@@ -321,7 +333,9 @@
       <span class="field-label" id="labelMX">Price per liter</span>
       <div class="price-input-row" id="rowMXN">
         <span class="sym">$</span>
-        <input type="number" id="mxn" placeholder="22.80" step="0.01" min="0" inputmode="decimal">
+        <button type="button" class="step-btn" data-target="mxn" data-dir="down">&minus;</button>
+        <input type="number" id="mxn" placeholder="22.80" step="0.10" min="0" inputmode="decimal">
+        <button type="button" class="step-btn" data-target="mxn" data-dir="up">+</button>
         <span class="unit">MXN/L</span>
       </div>
       <p class="equiv" id="equivMXN">&mdash;</p>
@@ -544,7 +558,24 @@
   usdInput.addEventListener('blur', recompute);
   mxnInput.addEventListener('blur', recompute);
 
+  document.querySelectorAll('.step-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.dataset.target;
+      const dir = btn.dataset.dir;
+      const input = document.getElementById(targetId);
+      const step = parseFloat(input.step) || 0.01;
+      let val = parseFloat(input.value);
+      if(isNaN(val)) val = 0;
+      val = (dir === 'up') ? val + step : val - step;
+      if(val < 0) val = 0;
+      input.value = val.toFixed(2);
+      if(targetId !== 'rate') lastEdited = targetId;
+      recompute();
+    });
+  });
+
   applyStaticText();
+  lastEdited = 'usd';
   recompute();
 </script>
 </body>
