@@ -313,7 +313,7 @@
       <span>MXN</span>
     </div>
   </div>
-  <p class="rate-hint" id="rateHint">Update this to today's rate for an accurate conversion.</p>
+  <p class="rate-hint" id="rateHint">Se actualiza automáticamente una vez al día. Puedes ajustarlo manualmente si lo prefieres.</p>
 
   <div class="grid">
     <div class="panel us" id="panelUS">
@@ -399,7 +399,7 @@
       subtitle: 'Enter a price on either side and it converts instantly to the other currency and unit.',
       rateLabel: 'Exchange rate',
       rateEq: '1 USD =',
-      rateHint: "Update this to today's rate for an accurate conversion.",
+      rateHint: 'Updates automatically once a day. You can adjust it manually if you prefer.',
       flagUS: 'United States',
       sideNameUS: 'San Diego side',
       labelUS: 'Price per gallon',
@@ -428,7 +428,7 @@
       subtitle: 'Ingresa un precio en cualquiera de los dos lados y se convierte al instante a la otra moneda y unidad.',
       rateLabel: 'Tipo de cambio',
       rateEq: '1 USD =',
-      rateHint: 'Actualiza esto al tipo de cambio de hoy para una conversión precisa.',
+      rateHint: 'Se actualiza autom\u00e1ticamente una vez al d\u00eda. Puedes ajustarlo manualmente si lo prefieres.',
       flagUS: 'Estados Unidos',
       sideNameUS: 'Lado San Diego',
       labelUS: 'Precio por gal\u00f3n',
@@ -580,6 +580,54 @@
   applyStaticText();
   lastEdited = 'usd';
   recompute();
+
+  // --- Actualización automática del tipo de cambio (una vez al día) ---
+  const RATE_CACHE_KEY = 'sdtj_usd_mxn_rate';
+  const RATE_CACHE_DATE_KEY = 'sdtj_usd_mxn_rate_date';
+
+  function todayStr(){
+    return new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+  }
+
+  function applyLiveRate(rate){
+    if(!rate || isNaN(rate) || rate <= 0) return;
+    rateInput.value = rate.toFixed(2);
+    recompute();
+  }
+
+  async function refreshExchangeRate(){
+    let cachedRate = null;
+    let cachedDate = null;
+    try{
+      cachedRate = localStorage.getItem(RATE_CACHE_KEY);
+      cachedDate = localStorage.getItem(RATE_CACHE_DATE_KEY);
+    } catch(e){ /* localStorage no disponible; seguimos sin caché */ }
+
+    if(cachedRate && cachedDate === todayStr()){
+      applyLiveRate(parseFloat(cachedRate));
+      return;
+    }
+
+    try{
+      const response = await fetch('https://api.frankfurter.app/latest?from=USD&to=MXN');
+      if(!response.ok) throw new Error('respuesta no válida');
+      const data = await response.json();
+      const rate = data && data.rates && data.rates.MXN;
+      if(rate){
+        applyLiveRate(rate);
+        try{
+          localStorage.setItem(RATE_CACHE_KEY, rate.toString());
+          localStorage.setItem(RATE_CACHE_DATE_KEY, todayStr());
+        } catch(e){ /* si no se puede guardar, no pasa nada, solo no cacheamos */ }
+      }
+    } catch(err){
+      // Si falla la consulta (sin internet, API caída, etc.), usamos el último
+      // valor cacheado si existe, o dejamos el valor por default (17.50).
+      if(cachedRate) applyLiveRate(parseFloat(cachedRate));
+    }
+  }
+
+  refreshExchangeRate();
 </script>
 </body>
 </html>
